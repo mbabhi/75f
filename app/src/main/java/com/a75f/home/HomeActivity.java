@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView {
     private ImageView mImageView;
     HomePresenter homePresenter;
     LinearLayout layout;
+    Bitmap bitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView {
 
     private void drawImage(List<HomeResponse> homeResponseList) {
         //Load image onto bitmap
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),
+        bitmap = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.background_balcony);
         //Create paint
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -93,11 +94,12 @@ public class HomeActivity extends AppCompatActivity implements HomeView {
             double y = Math.round(position.getY());
             double width = Math.round(position.getX()) + Math.round(position.getWidth());
             double height = Math.round(position.getY()) + Math.round(position.getHeight());
-           // tempCanvas.drawRect(new RectF((float) x, (float) y, (float) width, (float) height), paint);
+            // tempCanvas.drawRect(new RectF((float) x, (float) y, (float) width, (float) height), paint);
             tempCanvas.drawRoundRect(new RectF((float) x, (float) y, (float) width, (float) height), 2, 2, paint);
             mImageView.setImageBitmap(tempBitmap);
         }
-//Without the background image.
+
+        //Without the background image.andr
 //        Bitmap bitmap = Bitmap.createBitmap((int) getWindowManager()
 //                .getDefaultDisplay().getWidth(), (int) getWindowManager()
 //                .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);
@@ -143,14 +145,14 @@ public class HomeActivity extends AppCompatActivity implements HomeView {
                 .setTitle(R.string.logout_confirm);
         builder.setPositiveButton(R.string.logout_yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                ProgressUtils.showProgress(HomeActivity.this,getString(R.string.logging_out));
-                homePresenter.logOutKinvey(HomeActivity.this,mKinveyClient);
+                ProgressUtils.showProgress(HomeActivity.this, getString(R.string.logging_out));
+                homePresenter.logOutKinvey(HomeActivity.this, mKinveyClient);
             }
         });
 
         builder.setNegativeButton(R.string.logout_no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-               dialog.dismiss();
+                dialog.dismiss();
             }
         });
 
@@ -165,5 +167,14 @@ public class HomeActivity extends AppCompatActivity implements HomeView {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         Toast.makeText(HomeActivity.this, R.string.logout_success, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bitmap != null) {
+            bitmap.recycle();
+            bitmap = null;
+        }
     }
 }
